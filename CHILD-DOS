@@ -1,0 +1,554 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_COMMAND_LENGTH 100
+
+int main() {
+    char command[MAX_COMMAND_LENGTH];
+    int running = 1;
+
+    while (running) {
+        printf(">");
+        fgets(command, MAX_COMMAND_LENGTH, stdin);
+        command[strcspn(command, "\n")] = 0;
+
+        if (strcmp(command, "exit") == 0) {
+            running = 0;
+        } else if (strcmp(command, "dir") == 0) {
+            // code to display directory contents
+            #include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+
+int main() {
+    DIR *dir;
+    struct dirent *ent;
+
+    dir = opendir(".");
+    if (dir == NULL) {
+        perror("Error opening directory");
+        return EXIT_FAILURE;
+    }
+
+    while ((ent = readdir(dir)) != NULL) {
+        printf("%s\n", ent->d_name);
+    }
+
+    closedir(dir);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "cd") == 0) {
+            // code to change current directory
+            #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: cd [directory]\n");
+        return EXIT_FAILURE;
+    }
+
+    if (chdir(argv[1]) != 0) {
+        perror("Error changing directory");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "md") == 0) {
+            // code to create a new directory
+            #include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: mkdir [directory]\n");
+        return EXIT_FAILURE;
+    }
+
+    if (mkdir(argv[1], 0777) != 0) {
+        perror("Error creating directory");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "rd") == 0) {
+            // code to remove a directory
+            #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: rmdir [directory]\n");
+        return EXIT_FAILURE;
+    }
+
+    if (rmdir(argv[1]) != 0) {
+        perror("Error removing directory");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "type") == 0) {
+            // code to display file contents
+            #include <stdio.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+int main(int argc, char *argv[]) {
+    FILE *fp;
+    char buffer[BUFFER_SIZE];
+
+    if (argc < 2) {
+        printf("Usage: type [filename]\n");
+        return EXIT_FAILURE;
+    }
+
+    fp = fopen(argv[1], "r");
+    if (fp == NULL) {
+        perror("Error opening file");
+        return EXIT_FAILURE;
+    }
+
+    while (fgets(buffer, BUFFER_SIZE, fp)) {
+        printf("%s", buffer);
+    }
+
+    fclose(fp);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "copy") == 0) {
+            // code to copy a file
+            #include <stdio.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+int main(int argc, char *argv[]) {
+    FILE *src_file, *dest_file;
+    char buffer[BUFFER_SIZE];
+    size_t bytes_read;
+
+    if (argc < 3) {
+        printf("Usage: copy [source] [destination]\n");
+        return EXIT_FAILURE;
+    }
+
+    src_file = fopen(argv[1], "rb");
+    if (src_file == NULL) {
+        perror("Error opening source file");
+        return EXIT_FAILURE;
+    }
+
+    dest_file = fopen(argv[2], "wb");
+    if (dest_file == NULL) {
+        perror("Error opening destination file");
+        fclose(src_file);
+        return EXIT_FAILURE;
+    }
+
+    while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, src_file)) > 0) {
+        fwrite(buffer, 1, bytes_read, dest_file);
+    }
+
+    fclose(src_file);
+    fclose(dest_file);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "del") == 0) {
+            // code to delete a file
+            #include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: del [filename]\n");
+        return EXIT_FAILURE;
+    }
+
+    if (remove(argv[1]) != 0) {
+        perror("Error deleting file");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "ren") == 0) {
+            // code to rename a file
+            #include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Usage: ren [oldname] [newname]\n");
+        return EXIT_FAILURE;
+    }
+
+    if (rename(argv[1], argv[2]) != 0) {
+        perror("Error renaming file");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "echo") == 0) {
+            // code to display a message
+            #include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: echo [message]\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", argv[1]);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "set") == 0) {
+            // code to set an environment variable
+            #include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Usage: set [variable] [value]\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = setenv(argv[1], argv[2], 1);
+
+    if (result != 0) {
+        perror("Error setting environment variable");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "cls") == 0) {
+            // code to clear the screen
+            #include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    system("cls");
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "help") == 0) {
+            // code to display help information
+            #include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: help [command]\n");
+        printf("Displays help information for the specified command, or lists all available commands if no command is specified.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (strcmp(argv[1], "dir") == 0) {
+        printf("Displays a list of files and subdirectories in a directory.\n");
+    } else if (strcmp(argv[1], "cd") == 0) {
+        printf("Changes the current directory.\n");
+    } else if (strcmp(argv[1], "md") == 0) {
+        printf("Creates a new directory.\n");
+    } else if (strcmp(argv[1], "rd") == 0) {
+        printf("Removes a directory.\n");
+    } else if (strcmp(argv[1], "type") == 0) {
+        printf("Displays the contents of a text file.\n");
+    } else if (strcmp(argv[1], "copy") == 0) {
+        printf("Copies a file from one location to another.\n");
+    } else if (strcmp(argv[1], "del") == 0) {
+        printf("Deletes a file.\n");
+    } else if (strcmp(argv[1], "ren") == 0) {
+        printf("Renames a file.\n");
+    } else if (strcmp(argv[1], "set") == 0) {
+        printf("Sets the value of an environmental variable.\n");
+    } else if (strcmp(argv[1], "cls") == 0) {
+        printf("Clears the screen.\n");
+    } else if (strcmp(argv[1], "help") == 0) {
+        printf("Displays help information for the specified command, or lists all available commands if no command is specified.\n");
+    } else {
+        printf("Unknown command: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "date") == 0) {
+            // code to display the current date
+            #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(int argc, char *argv[]) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    printf("%02d/%02d/%04d\n", tm.tm_mon + 1, tm.tm_mday, tm.tm_year + 1900);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "time") == 0) {
+            // code to display the current time
+            #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(int argc, char *argv[]) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    printf("%02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "vol") == 0) {
+            // code to display volume information
+            #include <stdio.h>
+#include <stdlib.h>
+#include <sys/statvfs.h>
+
+int main(int argc, char *argv[]) {
+    struct statvfs vfs;
+
+    if (statvfs("/", &vfs) == -1) {
+        printf("Error: Could not get volume information\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Volume in drive C is %s\n", "/");
+    printf("Volume Serial Number is %lx\n", vfs.f_fsid);
+    printf("%lu bytes total\n", vfs.f_frsize * vfs.f_blocks);
+    printf("%lu bytes free\n", vfs.f_frsize * vfs.f_bfree);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "ver") == 0) {
+            // code to display the operating system version
+            #include <stdio.h>
+#include <stdlib.h>
+
+#define OS_NAME "CHILD-DOS"
+#define OS_VERSION "Alpha 1.0"
+
+int main(int argc, char *argv[]) {
+    printf("%s Version %s\n", OS_NAME, OS_VERSION);
+    printf("(c) 2023 3rd Child Services. All rights reserved.\n");
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "mdel") == 0) {
+            // code to delete all files in a directory
+            #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <unistd.h>
+
+void delete_all_files(char *dir_name) {
+    DIR *dir;
+    struct dirent *entry;
+    char path[256];
+
+    dir = opendir(dir_name);
+
+    if (dir == NULL) {
+        printf("Error: Could not open directory %s\n", dir_name);
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        snprintf(path, sizeof(path), "%s/%s", dir_name, entry->d_name);
+
+        if (unlink(path) == -1) {
+            printf("Error: Could not delete file %s\n", path);
+        }
+    }
+
+    closedir(dir);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: delall <directory>\n");
+        return EXIT_FAILURE;
+    }
+
+    delete_all_files(argv[1]);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "mdir") == 0) {
+            // code to display directory contents in a formatted way
+            #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <time.h>
+
+void display_dir_contents(char *dir_name) {
+    DIR *dir;
+    struct dirent *entry;
+    struct stat file_stats;
+    char path[256];
+
+    dir = opendir(dir_name);
+
+    if (dir == NULL) {
+        printf("Error: Could not open directory %s\n", dir_name);
+        return;
+    }
+
+    printf("Volume in drive C is OS\n");
+    printf("Volume Serial Number is BUSS-USSR\n");
+    printf("\n");
+    printf("Directory of %s\n", dir_name);
+    printf("\n");
+    printf("%-25s %10s %12s\n", "Name", "Size", "Date Modified");
+    printf("\n");
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        snprintf(path, sizeof(path), "%s/%s", dir_name, entry->d_name);
+
+        if (stat(path, &file_stats) == -1) {
+            printf("Error: Could not read file stats for %s\n", path);
+            continue;
+        }
+
+        printf("%-25s %10lld %s", entry->d_name, (long long)file_stats.st_size, ctime(&file_stats.st_mtime));
+    }
+
+    closedir(dir);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: mdir <directory>\n");
+        return EXIT_FAILURE;
+    }
+
+    display_dir_contents(argv[1]);
+
+    return EXIT_SUCCESS;
+}
+
+        } else if (strcmp(command, "mem") == 0) {
+            // code to display memory usage information
+           #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 1) {
+        printf("Usage: mem\n");
+        return EXIT_FAILURE;
+    }
+
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    long total_memory = pages * page_size;
+
+    long resident_pages = 0;
+    FILE *statm = fopen("/proc/self/statm", "r");
+    fscanf(statm, "%ld", &resident_pages);
+    fclose(statm);
+
+    long resident_memory = resident_pages * page_size;
+
+    printf("Total memory: %ld bytes\n", total_memory);
+    printf("Resident memory: %ld bytes\n", resident_memory);
+
+    return EXIT_SUCCESS;
+}
+
+
+        } else if (strcmp(command, "tree") == 0) {
+            // code to display directory structure in a tree format
+            #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+
+void print_tree(char *path, int indent) {
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(path);
+
+    if (!dir) {
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_DIR) {
+            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+                continue;
+            }
+            printf("%*s%s/\n", indent, "", entry->d_name);
+            char subdir_path[1024];
+            snprintf(subdir_path, sizeof(subdir_path), "%s/%s", path, entry->d_name);
+            print_tree(subdir_path, indent + 4);
+        } else {
+            printf("%*s%s\n", indent, "", entry->d_name);
+        }
+    }
+
+    closedir(dir);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Usage: tree <directory>\n");
+        return EXIT_FAILURE;
+    }
+
+    char *path = argv[1];
+    printf("%s/\n", path);
+    print_tree(path, 4);
+
+    return EXIT_SUCCESS;
+}
+
+        } else {
+            printf("Invalid command: %s\n", command);
+        }
+    }
+
+    return 0;
+}
