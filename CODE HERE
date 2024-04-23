@@ -1,554 +1,639 @@
-#include <stdio.h>
-#include <string.h>
-
-#define MAX_COMMAND_LENGTH 100
-
-int main() {
-    char command[MAX_COMMAND_LENGTH];
-    int running = 1;
-
-    while (running) {
-        printf(">");
-        fgets(command, MAX_COMMAND_LENGTH, stdin);
-        command[strcspn(command, "\n")] = 0;
-
-        if (strcmp(command, "exit") == 0) {
-            running = 0;
-        } else if (strcmp(command, "dir") == 0) {
-            // code to display directory contents
-            #include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
-
-int main() {
-    DIR *dir;
-    struct dirent *ent;
-
-    dir = opendir(".");
-    if (dir == NULL) {
-        perror("Error opening directory");
-        return EXIT_FAILURE;
-    }
-
-    while ((ent = readdir(dir)) != NULL) {
-        printf("%s\n", ent->d_name);
-    }
-
-    closedir(dir);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "cd") == 0) {
-            // code to change current directory
-            #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: cd [directory]\n");
-        return EXIT_FAILURE;
-    }
-
-    if (chdir(argv[1]) != 0) {
-        perror("Error changing directory");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "md") == 0) {
-            // code to create a new directory
-            #include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: mkdir [directory]\n");
-        return EXIT_FAILURE;
-    }
-
-    if (mkdir(argv[1], 0777) != 0) {
-        perror("Error creating directory");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "rd") == 0) {
-            // code to remove a directory
-            #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: rmdir [directory]\n");
-        return EXIT_FAILURE;
-    }
-
-    if (rmdir(argv[1]) != 0) {
-        perror("Error removing directory");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "type") == 0) {
-            // code to display file contents
-            #include <stdio.h>
-#include <stdlib.h>
-
-#define BUFFER_SIZE 1024
-
-int main(int argc, char *argv[]) {
-    FILE *fp;
-    char buffer[BUFFER_SIZE];
-
-    if (argc < 2) {
-        printf("Usage: type [filename]\n");
-        return EXIT_FAILURE;
-    }
-
-    fp = fopen(argv[1], "r");
-    if (fp == NULL) {
-        perror("Error opening file");
-        return EXIT_FAILURE;
-    }
-
-    while (fgets(buffer, BUFFER_SIZE, fp)) {
-        printf("%s", buffer);
-    }
-
-    fclose(fp);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "copy") == 0) {
-            // code to copy a file
-            #include <stdio.h>
-#include <stdlib.h>
-
-#define BUFFER_SIZE 1024
-
-int main(int argc, char *argv[]) {
-    FILE *src_file, *dest_file;
-    char buffer[BUFFER_SIZE];
-    size_t bytes_read;
-
-    if (argc < 3) {
-        printf("Usage: copy [source] [destination]\n");
-        return EXIT_FAILURE;
-    }
-
-    src_file = fopen(argv[1], "rb");
-    if (src_file == NULL) {
-        perror("Error opening source file");
-        return EXIT_FAILURE;
-    }
-
-    dest_file = fopen(argv[2], "wb");
-    if (dest_file == NULL) {
-        perror("Error opening destination file");
-        fclose(src_file);
-        return EXIT_FAILURE;
-    }
-
-    while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, src_file)) > 0) {
-        fwrite(buffer, 1, bytes_read, dest_file);
-    }
-
-    fclose(src_file);
-    fclose(dest_file);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "del") == 0) {
-            // code to delete a file
-            #include <stdio.h>
-#include <stdlib.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: del [filename]\n");
-        return EXIT_FAILURE;
-    }
-
-    if (remove(argv[1]) != 0) {
-        perror("Error deleting file");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "ren") == 0) {
-            // code to rename a file
-            #include <stdio.h>
-#include <stdlib.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 3) {
-        printf("Usage: ren [oldname] [newname]\n");
-        return EXIT_FAILURE;
-    }
-
-    if (rename(argv[1], argv[2]) != 0) {
-        perror("Error renaming file");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "echo") == 0) {
-            // code to display a message
-            #include <stdio.h>
-#include <stdlib.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: echo [message]\n");
-        return EXIT_FAILURE;
-    }
-
-    printf("%s\n", argv[1]);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "set") == 0) {
-            // code to set an environment variable
-            #include <stdlib.h>
-#include <stdio.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 3) {
-        printf("Usage: set [variable] [value]\n");
-        return EXIT_FAILURE;
-    }
-
-    int result = setenv(argv[1], argv[2], 1);
-
-    if (result != 0) {
-        perror("Error setting environment variable");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "cls") == 0) {
-            // code to clear the screen
-            #include <stdlib.h>
-#include <stdio.h>
-
-int main(int argc, char *argv[]) {
-    system("cls");
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "help") == 0) {
-            // code to display help information
-            #include <stdio.h>
-#include <stdlib.h>
-
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: help [command]\n");
-        printf("Displays help information for the specified command, or lists all available commands if no command is specified.\n");
-        return EXIT_FAILURE;
-    }
-
-    if (strcmp(argv[1], "dir") == 0) {
-        printf("Displays a list of files and subdirectories in a directory.\n");
-    } else if (strcmp(argv[1], "cd") == 0) {
-        printf("Changes the current directory.\n");
-    } else if (strcmp(argv[1], "md") == 0) {
-        printf("Creates a new directory.\n");
-    } else if (strcmp(argv[1], "rd") == 0) {
-        printf("Removes a directory.\n");
-    } else if (strcmp(argv[1], "type") == 0) {
-        printf("Displays the contents of a text file.\n");
-    } else if (strcmp(argv[1], "copy") == 0) {
-        printf("Copies a file from one location to another.\n");
-    } else if (strcmp(argv[1], "del") == 0) {
-        printf("Deletes a file.\n");
-    } else if (strcmp(argv[1], "ren") == 0) {
-        printf("Renames a file.\n");
-    } else if (strcmp(argv[1], "set") == 0) {
-        printf("Sets the value of an environmental variable.\n");
-    } else if (strcmp(argv[1], "cls") == 0) {
-        printf("Clears the screen.\n");
-    } else if (strcmp(argv[1], "help") == 0) {
-        printf("Displays help information for the specified command, or lists all available commands if no command is specified.\n");
-    } else {
-        printf("Unknown command: %s\n", argv[1]);
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "date") == 0) {
-            // code to display the current date
-            #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-int main(int argc, char *argv[]) {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-
-    printf("%02d/%02d/%04d\n", tm.tm_mon + 1, tm.tm_mday, tm.tm_year + 1900);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "time") == 0) {
-            // code to display the current time
-            #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-int main(int argc, char *argv[]) {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-
-    printf("%02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "vol") == 0) {
-            // code to display volume information
-            #include <stdio.h>
-#include <stdlib.h>
-#include <sys/statvfs.h>
-
-int main(int argc, char *argv[]) {
-    struct statvfs vfs;
-
-    if (statvfs("/", &vfs) == -1) {
-        printf("Error: Could not get volume information\n");
-        return EXIT_FAILURE;
-    }
-
-    printf("Volume in drive C is %s\n", "/");
-    printf("Volume Serial Number is %lx\n", vfs.f_fsid);
-    printf("%lu bytes total\n", vfs.f_frsize * vfs.f_blocks);
-    printf("%lu bytes free\n", vfs.f_frsize * vfs.f_bfree);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "ver") == 0) {
-            // code to display the operating system version
-            #include <stdio.h>
-#include <stdlib.h>
-
-#define OS_NAME "CHILD-DOS"
-#define OS_VERSION "Alpha 1.0"
-
-int main(int argc, char *argv[]) {
-    printf("%s Version %s\n", OS_NAME, OS_VERSION);
-    printf("(c) 2023 3rd Child Services. All rights reserved.\n");
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "mdel") == 0) {
-            // code to delete all files in a directory
-            #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
-#include <unistd.h>
-
-void delete_all_files(char *dir_name) {
-    DIR *dir;
-    struct dirent *entry;
-    char path[256];
-
-    dir = opendir(dir_name);
-
-    if (dir == NULL) {
-        printf("Error: Could not open directory %s\n", dir_name);
-        return;
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-
-        snprintf(path, sizeof(path), "%s/%s", dir_name, entry->d_name);
-
-        if (unlink(path) == -1) {
-            printf("Error: Could not delete file %s\n", path);
-        }
-    }
-
-    closedir(dir);
-}
-
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Usage: delall <directory>\n");
-        return EXIT_FAILURE;
-    }
-
-    delete_all_files(argv[1]);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "mdir") == 0) {
-            // code to display directory contents in a formatted way
-            #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <time.h>
-
-void display_dir_contents(char *dir_name) {
-    DIR *dir;
-    struct dirent *entry;
-    struct stat file_stats;
-    char path[256];
-
-    dir = opendir(dir_name);
-
-    if (dir == NULL) {
-        printf("Error: Could not open directory %s\n", dir_name);
-        return;
-    }
-
-    printf("Volume in drive C is OS\n");
-    printf("Volume Serial Number is BUSS-USSR\n");
-    printf("\n");
-    printf("Directory of %s\n", dir_name);
-    printf("\n");
-    printf("%-25s %10s %12s\n", "Name", "Size", "Date Modified");
-    printf("\n");
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-
-        snprintf(path, sizeof(path), "%s/%s", dir_name, entry->d_name);
-
-        if (stat(path, &file_stats) == -1) {
-            printf("Error: Could not read file stats for %s\n", path);
-            continue;
-        }
-
-        printf("%-25s %10lld %s", entry->d_name, (long long)file_stats.st_size, ctime(&file_stats.st_mtime));
-    }
-
-    closedir(dir);
-}
-
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Usage: mdir <directory>\n");
-        return EXIT_FAILURE;
-    }
-
-    display_dir_contents(argv[1]);
-
-    return EXIT_SUCCESS;
-}
-
-        } else if (strcmp(command, "mem") == 0) {
-            // code to display memory usage information
-           #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-int main(int argc, char *argv[]) {
-    if (argc != 1) {
-        printf("Usage: mem\n");
-        return EXIT_FAILURE;
-    }
-
-    long pages = sysconf(_SC_PHYS_PAGES);
-    long page_size = sysconf(_SC_PAGE_SIZE);
-    long total_memory = pages * page_size;
-
-    long resident_pages = 0;
-    FILE *statm = fopen("/proc/self/statm", "r");
-    fscanf(statm, "%ld", &resident_pages);
-    fclose(statm);
-
-    long resident_memory = resident_pages * page_size;
-
-    printf("Total memory: %ld bytes\n", total_memory);
-    printf("Resident memory: %ld bytes\n", resident_memory);
-
-    return EXIT_SUCCESS;
-}
-
-
-        } else if (strcmp(command, "tree") == 0) {
-            // code to display directory structure in a tree format
-            #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
-
-void print_tree(char *path, int indent) {
-    DIR *dir;
-    struct dirent *entry;
-
-    dir = opendir(path);
-
-    if (!dir) {
-        return;
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (entry->d_type == DT_DIR) {
-            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
-                continue;
-            }
-            printf("%*s%s/\n", indent, "", entry->d_name);
-            char subdir_path[1024];
-            snprintf(subdir_path, sizeof(subdir_path), "%s/%s", path, entry->d_name);
-            print_tree(subdir_path, indent + 4);
-        } else {
-            printf("%*s%s\n", indent, "", entry->d_name);
-        }
-    }
-
-    closedir(dir);
-}
-
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Usage: tree <directory>\n");
-        return EXIT_FAILURE;
-    }
-
-    char *path = argv[1];
-    printf("%s/\n", path);
-    print_tree(path, 4);
-
-    return EXIT_SUCCESS;
-}
-
-        } else {
-            printf("Invalid command: %s\n", command);
-        }
-    }
-
-    return 0;
-}
+; Bootloader code
+
+org 0x7c00  ; Set origin to where BIOS loads the bootloader
+
+BITS 16     ; 16-bit mode
+
+section .text
+    global _start
+
+_start:
+    ; Bootloader code here
+    xor ax, ax              ; Clear ax
+    mov ds, ax              ; Set data segment to 0
+    mov ss, ax              ; Set stack segment to 0
+    mov sp, 0x7C00          ; Set stack pointer
+
+    mov si, welcome_message ; Address of welcome message
+    call print_string       ; Print welcome message
+
+    ; Kernel code
+    mov ah, 0x0E     ; BIOS teletype
+    mov al, 'H'      ; Character to print
+    int 0x10         ; Call BIOS
+
+    ; DOS code
+section .data
+    welcome_message db "Salutations, User. Welcome to BitDos", 0
+    prompt_str db ">> ", 0
+    prompt_dir_str db " / ", 0
+    log_format db "[%s] %s", 0
+    msg_invalid_command db "Invalid command! Type 'help' for usage instructions.", 0
+    msg_change_dir db "Changed directory to: %s", 0
+    msg_prev_dir db "Moved to previous directory.", 0
+    msg_root_dir db "Already at root directory.", 0
+    msg_next_dir db "Moved to next directory.", 0
+    msg_no_next_dir db "No next directory available.", 0
+    msg_file_created db "File created.", 0
+    msg_file_deleted db "File deleted.", 0
+    msg_file_not_found db "File not found.", 0
+    msg_dir_created db "Directory created.", 0
+    msg_dir_deleted db "Directory deleted.", 0
+    msg_dir_not_found db "Directory not found.", 0
+    msg_max_files db "Maximum number of files reached.", 0
+    msg_max_dirs db "Maximum number of directories reached.", 0
+    msg_enter_content db "Enter file content (max 512 characters):", 0
+    msg_file_edited db "File edited.", 0
+    msg_open_log_error db "Error opening log file!", 0
+    msg_log_create_file db "Created file: %s", 0
+    msg_log_edit_file db "Edited file: %s", 0
+    msg_log_delete_file db "Deleted file: %s", 0
+    msg_log_create_dir db "Created directory: %s", 0
+    msg_log_delete_dir db "Deleted directory: %s", 0
+    msg_log_contents db "Log contents:", 0
+    msg_log_end db "End of log.", 0
+    msg_log_close db "Closing log file.", 0
+    msg_log_cleared db "Log file cleared.", 0
+    msg_clear_screen db "Screen cleared.", 0
+    help_text db "Commands:", 0
+                db " - cd <directory>: Change directory.", 0
+                db " - mkdir <name>: Create a directory.", 0
+                db " - rm <filename>: Delete a file.", 0
+                db " - ls: List files in current directory.", 0
+                db " - edit <filename>: Edit a file.", 0
+                db " - log: Display log.", 0
+                db " - clear: Clear the screen.", 0
+                db " - exit: Exit the shell.", 0
+                db " - help: Display this help message.", 0
+                db 0
+    log_buffer resb 512
+
+section .bss
+    prompt_buffer resb 256
+    log_file resd 1
+    current_dir resb 64
+    file_count resd 1
+    dir_count resd 1
+    current_depth resd 1
+
+section .rodata
+    HOME_DIRECTORY db "/", 0
+    prev_dir_str db "..", 0
+    next_dir_str db ".", 0
+    dir_separator db "/", 0
+    files resb 51200
+    directory_tree resb 6400
+    MAX_DIR_DEPTH equ 10
+    MAX_FILES equ 100
+    MAX_FILE_SIZE equ 512
+    MAX_CONTENT_LENGTH equ 512
+    MAX_DIRNAME_LENGTH equ 64
+    LOG_FILE db "log.txt", 0
+    CMD_EXIT equ 0
+    CMD_CD equ 1
+    CMD_MKDIR equ 2
+    CMD_RM equ 3
+    CMD_LS equ 4
+    CMD_EDIT equ 5
+    CMD_HELP equ 6
+    CMD_CLEAR equ 7
+    CMD_LOG equ 8
+
+change_directory:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+
+    mov eax, [prompt_buffer]
+    call strtok
+    mov ebx, eax
+
+    cmp ebx, 0
+    je change_dir_exit
+
+    cmp dword [ebx], 0
+    je root_dir
+
+    mov esi, 0
+.loop_cd:
+    cmp esi, [dir_count]
+    jge not_found_cd
+    mov eax, esi
+    shl eax, 6
+    add eax, directory_tree
+    push dword [eax]
+    push ebx
+    call strcmp
+    add esp, 8
+    cmp eax, 0
+    je found_cd
+    inc esi
+    jmp .loop_cd
+
+found_cd:
+    mov ecx, esi
+    inc ecx
+    mov [current_depth], ecx
+    mov eax, esi
+    shl eax, 6
+    add eax, directory_tree
+    push eax
+    call strcpy
+    add esp, 4
+    jmp change_dir_end
+
+root_dir:
+    mov dword [current_depth], 0
+    mov eax, HOME_DIRECTORY
+    push eax
+    call strcpy
+    add esp, 4
+
+change_dir_end:
+    push ebx
+    push dword msg_change_dir
+    call printf
+    add esp, 8
+    jmp change_dir_exit
+
+not_found_cd:
+    push ebx
+    push dword msg_dir_not_found
+    call printf
+    add esp, 8
+
+change_dir_exit:
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+create_directory:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+    push edi
+
+    mov ebx, [ebp + 8]
+
+    cmp dword [dir_count], 100
+    jge max_dirs_reached
+
+    mov eax, [dir_count]
+    shl eax, 6
+    add eax, directory_tree
+    mov edi, eax
+
+    push ebx
+    push edi
+    add edi, MAX_DIRNAME_LENGTH
+    push edi
+    call strcpy
+    add esp, 12
+
+    inc dword [dir_count]
+
+    push ebx
+    push dword msg_dir_created
+    call printf
+    add esp, 8
+
+    push dword msg_log_create_dir
+    call log_action
+    add esp, 4
+
+    jmp create_directory_end
+
+max_dirs_reached:
+    push dword msg_max_dirs
+    call printf
+    add esp, 4
+
+create_directory_end:
+    pop edi
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+delete_directory:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+    push edi
+
+    mov ebx, [ebp + 8]
+
+    mov esi, 0
+.loop_find_dir:
+    cmp esi, [dir_count]
+    jge not_found_dir
+    mov eax, esi
+    shl eax, 6
+    add eax, directory_tree
+    push dword [eax]
+    push ebx
+    call strcmp
+    add esp, 8
+    cmp eax, 0
+    je found_dir
+    inc esi
+    jmp .loop_find_dir
+
+found_dir:
+    push dword [esi * 4 + file_count]
+    call delete_file
+    add esp, 4
+
+    mov eax, [dir_count]
+    sub eax, 1
+    shl eax, 6
+    add eax, directory_tree
+    add eax, esi
+    mov edi, eax
+
+    mov ecx, [dir_count]
+    shl ecx, 6
+    add ecx, directory_tree
+    sub ecx, 64
+
+    mov edx, [dir_count]
+    sub edx, esi
+    shl edx, 6
+    add edx, directory_tree
+
+    rep movsb
+
+    dec dword [dir_count]
+
+    push dword msg_dir_deleted
+    call printf
+    add esp, 4
+
+    push dword msg_log_delete_dir
+    call log_action
+    add esp, 4
+
+    jmp delete_directory_end
+
+not_found_dir:
+    push ebx
+    push dword msg_dir_not_found
+    call printf
+    add esp, 8
+
+delete_directory_end:
+    pop edi
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+list_files:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+
+    mov esi, 0
+.loop_list_files:
+    cmp esi, [file_count]
+    jge list_files_end
+    mov eax, esi
+    shl eax, 9
+    add eax, files
+    push eax
+    call printf
+    add esp, 4
+    inc esi
+    jmp .loop_list_files
+
+list_files_end:
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+delete_file:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+
+    mov ebx, [ebp + 8]
+
+    mov esi, 0
+.loop_find_file:
+    cmp esi, [file_count]
+    jge not_found_file
+    mov eax, esi
+    shl eax, 9
+    add eax, files
+    push dword [eax]
+    push ebx
+    call strcmp
+    add esp, 8
+    cmp eax, 0
+    je found_file
+    inc esi
+    jmp .loop_find_file
+
+found_file:
+    mov edx, [file_count]
+    dec edx
+    shl edx, 9
+    add edx, files
+    mov ecx, [file_count]
+    shl ecx, 9
+    add ecx, files
+    sub ecx, 512
+    mov eax, [file_count]
+    sub eax, esi
+    shl eax, 9
+    add eax, files
+    rep movsb
+
+    dec dword [file_count]
+
+    push dword msg_file_deleted
+    call printf
+    add esp, 4
+
+    push ebx
+    push dword msg_log_delete_file
+    call log_action
+    add esp, 8
+
+    jmp delete_file_end
+
+not_found_file:
+    push ebx
+    push dword msg_file_not_found
+    call printf
+    add esp, 8
+
+delete_file_end:
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+edit_file:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+    push edi
+
+    mov ebx, [ebp + 8]
+
+    mov esi, 0
+.loop_find_file_edit:
+    cmp esi, [file_count]
+    jge not_found_file_edit
+    mov eax, esi
+    shl eax, 9
+    add eax, files
+    push dword [eax]
+    push ebx
+    call strcmp
+    add esp, 8
+    cmp eax, 0
+    je found_file_edit
+    inc esi
+    jmp .loop_find_file_edit
+
+found_file_edit:
+    mov edi, esi
+    shl edi, 9
+    add edi, files
+    mov esi, edi
+    add esi, MAX_FILENAME_LENGTH
+    mov edi, [prompt_buffer]
+    push edi
+    call strcpy
+    add esp, 4
+
+    push dword msg_enter_content
+    call printf
+    add esp, 4
+
+    push MAX_CONTENT_LENGTH
+    push esi
+    push dword stdin
+    call fgets
+    add esp, 12
+
+    push ebx
+    push dword msg_file_edited
+    call printf
+    add esp, 4
+
+    push ebx
+    push dword msg_log_edit_file
+    call log_action
+    add esp, 4
+
+    jmp edit_file_end
+
+not_found_file_edit:
+    push ebx
+    push dword msg_file_not_found
+    call printf
+    add esp, 8
+
+edit_file_end:
+    pop edi
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+access_logs:
+    push ebp
+    mov ebp, esp
+    push ebx
+    push esi
+
+    mov eax, LOG_FILE
+    push eax
+    push dword "r"
+    call fopen
+    add esp, 8
+
+    test eax, eax
+    jz log_file_open_error
+
+    mov [log_file], eax
+
+    push dword msg_log_contents
+    call printf
+    add esp, 4
+
+.read_log:
+    push LOG_BUFFER_SIZE
+    push log_buffer
+    push dword [log_file]
+    call fgets
+    add esp, 12
+
+    test eax, eax
+    jz .end_of_log
+
+    push log_buffer
+    call printf
+    add esp, 4
+
+    jmp .read_log
+
+.end_of_log:
+    push dword msg_log_end
+    call printf
+    add esp, 4
+
+    push dword msg_log_close
+    call printf
+    add esp, 4
+
+    push dword [log_file]
+    call fclose
+    add esp, 4
+
+    jmp access_logs_exit
+
+log_file_open_error:
+    push dword msg_open_log_error
+    call printf
+    add esp, 4
+
+access_logs_exit:
+    pop esi
+    pop ebx
+    pop ebp
+    ret
+
+display_help:
+    push ebp
+    mov ebp, esp
+    push dword help_text
+    call printf
+    add esp, 4
+    pop ebp
+    ret
+
+clear_screen:
+    push dword "cls"
+    call system
+    add esp, 4
+    push dword msg_clear_screen
+    call printf
+    add esp, 4
+    ret
+
+log_action:
+    push ebp
+    mov ebp, esp
+    push dword log_format
+    call printf
+    add esp, 4
+    push ebp
+    push dword [ebp + 8]
+    call printf
+    add esp, 8
+    pop ebp
+    ret
+
+main:
+    push dword welcome_message
+    call printf
+    add esp, 4
+
+main_loop:
+    push dword prompt_str
+    call printf
+    add esp, 4
+
+    push dword prompt_buffer
+    push dword 256
+    push dword stdin
+    call fgets
+    add esp, 12
+
+    mov eax, [prompt_buffer]
+    call strtok
+    cmp eax, 0
+    je main_loop
+
+    mov ebx, eax
+
+    ; Compare command
+    mov eax, ebx
+    cmp eax, "cd"
+    je command_cd
+    mov eax, ebx
+    cmp eax, "mkdir"
+    je command_mkdir
+    mov eax, ebx
+    cmp eax, "rm"
+    je command_rm
+    mov eax, ebx
+    cmp eax, "ls"
+    je command_ls
+    mov eax, ebx
+    cmp eax, "edit"
+    je command_edit
+    mov eax, ebx
+    cmp eax, "log"
+    je command_log
+    mov eax, ebx
+    cmp eax, "clear"
+    je command_clear
+    mov eax, ebx
+    cmp eax, "exit"
+    je command_exit
+    mov eax, ebx
+    cmp eax, "help"
+    je command_help
+    jmp command_invalid
+
+command_cd:
+    call change_directory
+    jmp main_loop
+command_mkdir:
+    call create_directory
+    jmp main_loop
+command_rm:
+    call delete_file
+    jmp main_loop
+command_ls:
+    call list_files
+    jmp main_loop
+command_edit:
+    call edit_file
+    jmp main_loop
+command_log:
+    call access_logs
+    jmp main_loop
+command_clear:
+    call clear_screen
+    jmp main_loop
+command_exit:
+    mov eax, 0
+    ret
+command_help:
+    call display_help
+    jmp main_loop
+command_invalid:
+    push dword msg_invalid_command
+    call printf
+    add esp, 4
+    jmp main_loop
+
+
+    ; Boot signature (0x55, 0xAA)
+    times 510-($-$$) db 0   ; Fill the rest of the boot sector with zeros
+    dw 0xAA55               ; Boot signature
+
